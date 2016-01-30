@@ -1,0 +1,20 @@
+ install permanent cluster with bp: https://gist.github.com/keyki/e3a867d5df056994ce5f
+• ssh on host_group_client_1 node
+• enter ambari-agent container
+• curl -o /tmp/hortonexamples.zip http://seanlahman.com/files/database/lahman591-csv.zip
+• unzip  /tmp/hortonexamples.zip -d /tmp/hortonexamples
+• hadoop fs -mkdir s3a://siq-hadoop/salaries-sample
+• beeline
+• !connect jdbc:hive2://10.0.174.236:10000 hive hive org.apache.hive.jdbc.HiveDriver (change 10.0.174.236 to local hiveserver2 ip - from host_group_master3
+• create external table salaries(yearID INT, teamID STRING, lgID STRING, playerID STRING, salary FLOAT) ROW FORMAT DELIMITED FIELDS TERMINATED BY "," STORED AS TEXTFILE LOCATION 's3a://siq-hadoop/salaries-sample' TBLPROPERTIES ("skip.header.line.count"="1");
+• show tables;
+• exit beeline
+• hadoop fs -put /tmp/hortonexamples/Salaries.csv  s3a://siq-hadoop/salaries-sample
+• enter beeline and connect
+• select * from salaries where salary>4110000.0 order by salary;
+• spark-sql --jars /usr/hdp/2.3.6.0-3526/hadoop/hadoop-aws.jar,/usr/hdp/2.3.6.0-3526/hadoop/lib/aws-java-sdk-1.7.4.jar
+• select * from salaries where salary>4110000.0 order by salary;
+• install ephemeral cluster with the same bp, but add metastore db properties
+• ssh on host_group_client_1 node
+• run beeline, connect to local hiveserver2, show tables, run the same select query
+• run spark-sql and run the same query
